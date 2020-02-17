@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import firebaseObj from '../../firebase';
 
@@ -34,20 +35,23 @@ export default class UserController {
       const user = await firebaseObj.database().ref(`/${encodedUserEmail}`).once('value').then((snap) => snap.val());
 
       if (user) {
-        const passCorrectBool = bcrypt.compareSync(password, user.hashedPassword);
-        // eslint-disable-next-line no-unused-expressions
-        passCorrectBool
-          ? res.status(200).json({
-            message: 'successfully logged in',
-          })
-          : res.status(403).json({
-            message: 'password not correct',
+        if (bcrypt.compareSync(password, user.hashedPassword)) {
+          const token = jwt.sign({
+            email,
+          }, 'secret', { expiresIn: '1h' });
+
+          return res.status(200).json({
+            message: 'loggin successful',
+            token,
           });
-      } else {
-        return res.status(404).json({
-          message: 'email doesnt exist',
+        }
+        return res.status(403).json({
+          message: 'password not correct',
         });
       }
+      return res.status(404).json({
+        message: 'email doesnt exist',
+      });
     } catch (error) {
       return null;
     }
