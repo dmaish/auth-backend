@@ -8,6 +8,6 @@ const router = express.Router();
 //   res.send('Hello World');
 // });
 
-router.use('/', userRoutes);
+router.use('/v1', userRoutes);
 
 export default router;
