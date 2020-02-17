@@ -55,6 +55,5 @@ export default class UserController {
     } catch (error) {
       return null;
     }
-    return null;
   }
 }
