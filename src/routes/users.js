@@ -13,7 +13,7 @@ router.get('/users', (req, res) => {
   res.send('fetch users');
 });
 
-router.post('/user/', UserController.createNewUser);
+router.post('/user', UserController.createNewUser);
 router.get('/user', UserController.loginUser);
 
 export default router;

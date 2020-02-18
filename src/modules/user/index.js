@@ -30,16 +30,16 @@ export default class UserController {
 
   static async loginUser(req, res) {
     try {
-      const { email, password } = req.body;
+      const { email, password } = req.query;
       const encodedUserEmail = encodeURIComponent(email).replace(/\./g, '%2E');
       const user = await firebaseObj.database().ref(`/${encodedUserEmail}`).once('value').then((snap) => snap.val());
+
 
       if (user) {
         if (bcrypt.compareSync(password, user.hashedPassword)) {
           const token = jwt.sign({
             email,
           }, 'secret', { expiresIn: '1h' });
-
           return res.status(200).json({
             message: 'loggin successful',
             token,
@@ -49,6 +49,7 @@ export default class UserController {
           message: 'password not correct',
         });
       }
+
       return res.status(404).json({
         message: 'email doesnt exist',
       });
